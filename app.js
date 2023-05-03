@@ -1,29 +1,24 @@
 const express = require("express");
 const app = express();
-const morgan = require("morgan");
-const logger = require("./logger");
-const authorize = require("./authorize");
+let { people } = require("./data");
 
-// app.use([logger, authorize]);
-// app.use(express.static("./public"));
-app.use(morgan("tiny"));
+app.use(express.static("./methods-public"));
 
-app.get("/", (req, res) => {
-  res.send("Home page");
+app.use(express.urlencoded({ extended: false }));
+
+app.get("/api/people", (req, res) => {
+  res.status(200).json({ success: true, data: people });
 });
 
-app.get("/about", (req, res) => {
-  res.send("About page");
-});
-app.get("/api/products", (req, res) => {
-  res.send("Products page");
-});
-
-app.get("/api/items", (req, res) => {
-  console.log(req.user);
-  res.send("Items page");
+app.post("/login", (req, res) => {
+  const { name } = req.body;
+  if (name) {
+    return res.status(200).send(`Welcome ${name}`);
+  } else {
+    res.status(401).send("Please provide a name");
+  }
 });
 
-app.listen(5000, () => {
-  console.log("server listing on port 5000...");
+app.listen(3000, () => {
+  console.log("server listing on port 3000...");
 });
